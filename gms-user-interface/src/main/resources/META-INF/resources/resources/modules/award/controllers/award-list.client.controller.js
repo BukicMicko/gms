@@ -1,16 +1,17 @@
 'use strict';
 
-angular.module('award').controller('AwardListController', ['$scope', '$state', '$stateParams', '$translate', 'UtilService', 'ObjectService', 'Award.ListService', 'Case.InfoService', 'ConfigService', 'Helper.ObjectTreeService',
-    function ($scope, $state, $stateParams, $translate, Util, ObjectService, CaseListService, CaseInfoService, ConfigService, HelperObjectTreeService) {
-        ConfigService.getModuleConfig("award").then(function (config) {
-            $scope.treeConfig = config.tree;
-            $scope.componentsConfig = config.components;
-            return config;
-        });
+angular.module('award').controller('AwardListController', ['$scope', '$state', '$stateParams', '$translate'
+    , 'UtilService', 'ObjectService', 'Award.ListService', 'Case.InfoService', 'Helper.ObjectBrowserService'
+    , function ($scope, $state, $stateParams, $translate
+        , Util, ObjectService, CaseListService, CaseInfoService, HelperObjectBrowserService) {
 
-        var treeHelper = new HelperObjectTreeService.Tree({
+
+        //"treeConfig", "treeData", "onLoad", and "onSelect" will be set by Tree Helper
+        new HelperObjectBrowserService.Tree({
             scope: $scope
-            , nodeId: $stateParams.id
+            , state: $state
+            , stateParams: $stateParams
+            , moduleId: "award"
             , getTreeData: function (start, n, sort, filters) {
                 return CaseListService.queryCasesTreeData(start, n, sort, filters);
             }
@@ -26,17 +27,5 @@ angular.module('award').controller('AwardListController', ['$scope', '$state', '
                 };
             }
         });
-        $scope.onLoad = function (start, n, sort, filters) {
-            treeHelper.onLoad(start, n, sort, filters);
-        };
-
-        $scope.onSelect = function (selectedCase) {
-            $scope.$emit('req-select-award', selectedCase);
-            var components = Util.goodArray(selectedCase.components);
-            var componentType = (1 == components.length) ? components[0] : "main";
-            $state.go('award.' + componentType, {
-                id: selectedCase.nodeId
-            });
-        };
     }
 ]);

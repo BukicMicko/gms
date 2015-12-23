@@ -4,7 +4,7 @@
   "menus": [
     {
       "menuId": "leftnav",
-      "menuItemURL": "cases",
+      "menuItemURL": "cases.main",
       "menuItemTitle": "Grant Opportunity",
       "iconClass": "fa fa-folder",
       "position": 40

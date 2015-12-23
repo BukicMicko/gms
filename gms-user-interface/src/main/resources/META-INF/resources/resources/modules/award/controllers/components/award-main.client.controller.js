@@ -7,6 +7,8 @@ angular.module('award').controller('Award.MainController', ['$scope', '$statePar
 		, CaseInfoService, ObjectService, ObjectCorrespondenceService, ObjectNoteService, ObjectTaskService
 		, ObjectAuditService, ObjectCostService, ObjectTimeService, dashboard, DashboardService, Store) {
 
+		$scope.$emit('main-component-started');
+
 		var promiseConfig = ConfigService.getModuleConfig("award").then(function (moduleConfig) {
 			$scope.components = moduleConfig.components;
 			$scope.config = _.find(moduleConfig.components, {id: "main"});

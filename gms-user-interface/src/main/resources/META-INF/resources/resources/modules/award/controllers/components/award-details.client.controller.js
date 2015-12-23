@@ -1,35 +1,39 @@
 'use strict';
 
 angular.module('award').controller('Award.DetailsController', ['$scope', '$stateParams', '$translate'
-    , 'UtilService', 'Case.InfoService', 'MessageService'
-    , function ($scope, $stateParams, $translate, Util, CaseInfoService, MessageService) {
+    , 'UtilService', 'ConfigService', 'Case.InfoService', 'MessageService', 'Helper.ObjectBrowserService'
+    , function ($scope, $stateParams, $translate
+        , Util, ConfigService, CaseInfoService, MessageService, HelperObjectBrowserService) {
 
-		$scope.$emit('req-component-config', 'details');
-        $scope.$on('component-config', function (e, componentId, config) {
-            if ('details' == componentId) {
-				$scope.config = config;
-			}
+        ConfigService.getComponentConfig("cases", "details").then(function (componentConfig) {
+            $scope.config = componentConfig;
+            return componentConfig;
         });
 
-        $scope.$on('award-updated', function (e, data) {
-            if (CaseInfoService.validateCaseInfo(data)) {
-                $scope.caseInfo = data;
-            }
-		});
+        var currentObjectId = HelperObjectBrowserService.getCurrentObjectId();
+        if (Util.goodPositive(currentObjectId, false)) {
+            CaseInfoService.getCaseInfo(currentObjectId).then(function (caseInfo) {
+                $scope.caseInfo = caseInfo;
+                return caseInfo;
+            });
+        }
 
 
-		$scope.options = {
+        $scope.options = {
             focus: true
-		};
+            //,height: 120
+        };
 
         $scope.saveDetails = function() {
-			var caseInfo = Util.omitNg($scope.caseInfo);
+            //$scope.editor.destroy();
+            var caseInfo = Util.omitNg($scope.caseInfo);
             CaseInfoService.saveCaseInfo(caseInfo).then(
                 function (caseInfo) {
-                    MessageService.info($translate.instant("award.comp.details.informSaved"));
+                    MessageService.info($translate.instant("cases.comp.details.informSaved"));
                     return caseInfo;
                 }
             );
+
         };
-	}
+    }
 ]);

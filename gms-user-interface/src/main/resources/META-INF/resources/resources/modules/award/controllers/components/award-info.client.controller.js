@@ -1,14 +1,12 @@
 'use strict';
 
 angular.module('award').controller('Award.InfoController', ['$scope', '$stateParams', 'UtilService'
-    , 'Object.LookupService', 'Case.LookupService', 'Case.InfoService', 'Object.ModelService'
-    , function ($scope, $stateParams, Util, ObjectLookupService, CaseLookupService, CaseInfoService, ObjectModelService) {
+    , 'Object.LookupService', 'Case.LookupService', 'Case.InfoService', 'Object.ModelService','ConfigService',
+    , function ($scope, $stateParams, Util, ObjectLookupService, CaseLookupService, CaseInfoService, ObjectModelService,ConfigService) {
 
-        $scope.$emit('req-component-config', 'info');
-        $scope.$on('component-config', function (e, componentId, config) {
-            if ("info" == componentId) {
-                $scope.config = config;
-            }
+        ConfigService.getComponentConfig("award", "info").then(function (componentConfig) {
+            $scope.config = componentConfig;
+            return componentConfig;
         });
 
         ObjectLookupService.getPriorities().then(
@@ -49,7 +47,7 @@ angular.module('award').controller('Award.InfoController', ['$scope', '$statePar
         });
 
         var previousId = null;
-        $scope.$on('award-updated', function (e, data) {
+        $scope.$on('object-updated', function (e, data) {
             if (!CaseInfoService.validateCaseInfo(data)) {
                 return;
             }
@@ -80,7 +78,7 @@ angular.module('award').controller('Award.InfoController', ['$scope', '$statePar
                 CaseInfoService.saveCaseInfo(caseInfo).then(
                     function (caseInfo) {
                         //update tree node tittle
-                        $scope.$emit("report-award-updated", caseInfo);
+                        $scope.$emit("report-object-updated", caseInfo);
                         return caseInfo;
                     }
                     , function (error) {

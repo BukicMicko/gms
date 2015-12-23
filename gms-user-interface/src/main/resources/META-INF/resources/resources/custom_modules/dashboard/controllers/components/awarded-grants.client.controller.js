@@ -60,7 +60,7 @@ angular.module('dashboard.awarded-grants', ['adf.provider'])
             };
 
             function applyConfig(e, componentId, config) {
-                if (componentId == 'unawardedGrants') {
+                if (componentId == 'awardedGrants') {
                     $scope.config = config;
                     $scope.gridOptions.columnDefs = config.columnDefs;
                     $scope.gridOptions.enableFiltering = config.enableFiltering;

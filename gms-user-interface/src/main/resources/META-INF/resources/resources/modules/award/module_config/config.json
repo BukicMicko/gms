@@ -4,7 +4,7 @@
   "menus": [
     {
       "menuId": "leftnav",
-      "menuItemURL": "award",
+      "menuItemURL": "award.main",
       "menuItemTitle": "Awards",
       "iconClass": "fa fa-folder",
       "position": 55

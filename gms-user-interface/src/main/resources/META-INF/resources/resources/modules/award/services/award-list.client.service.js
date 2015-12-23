@@ -27,7 +27,7 @@ angular.module('services').factory('Award.ListService', ['$resource', '$translat
         /**
          * @ngdoc method
          * @name queryCasesTreeData
-         * @methodOf services:Case.ListService
+         * @methodOf services:Award.ListService
          *
          * @description
          * Query list of cases from SOLR, pack result for Object Tree.
@@ -79,7 +79,7 @@ angular.module('services').factory('Award.ListService', ['$resource', '$translat
         /**
          * @ngdoc method
          * @name validateCaseList
-         * @methodOf services:Case.ListService
+         * @methodOf services:Award.ListService
          *
          * @description
          * Validate case list data
@@ -95,6 +95,18 @@ angular.module('services').factory('Award.ListService', ['$resource', '$translat
             return true;
         };
 
+        /**
+         * @ngdoc method
+         * @name validateCaseFile
+         * @methodOf services:Award.ListService
+         *
+         * @description
+         * Validate case file data
+         *
+         * @param {Object} data  Data to be validated
+         *
+         * @returns {Boolean} Return true if data is valid
+         */
         Service.validateCaseFile = function(data){
             if(!angular.equals(data.object_sub_type_s, Service.Object.SUB_TYPE)){
                 return false;
@@ -104,7 +116,6 @@ angular.module('services').factory('Award.ListService', ['$resource', '$translat
             }
             return true;
         }
-
 
         return Service;
     }

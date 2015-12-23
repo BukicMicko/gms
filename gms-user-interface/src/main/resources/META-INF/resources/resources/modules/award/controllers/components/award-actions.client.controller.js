@@ -1,21 +1,22 @@
 'use strict';
 
-angular.module('award').controller('Award.ActionsController', ['$scope', '$state', '$stateParams', '$q', 'UtilService'
-    , 'ObjectService', 'Authentication', 'Object.LookupService', 'Case.LookupService', 'Object.SubscriptionService', 'Object.ModelService', 'Case.InfoService'
-    , function ($scope, $state, $stateParams, $q, Util, ObjectService, Authentication, ObjectLookupService, CaseLookupService, ObjectSubscriptionService, ObjectModelService, CaseInfoService) {
+angular.module('award').controller('Award.ActionsController', ['$scope', '$state', '$stateParams', '$q'
+    , 'UtilService', 'ConfigService', 'ObjectService', 'Authentication', 'Object.LookupService', 'Case.LookupService'
+    , 'Object.SubscriptionService', 'Object.ModelService', 'Case.InfoService', 'Helper.ObjectBrowserService'
+    , function ($scope, $state, $stateParams, $q
+        , Util, ConfigService, ObjectService, Authentication, ObjectLookupService, CaseLookupService
+        , ObjectSubscriptionService, ObjectModelService, CaseInfoService, HelperObjectBrowserService) {
 
-        $scope.$emit('req-component-config', 'actions');
-        $scope.$on('component-config', function (e, componentId, config) {
-            if ('actions' == componentId) {
-                $scope.config = config;
-            }
+        ConfigService.getComponentConfig("award", "actions").then(function (componentConfig) {
+            $scope.config = componentConfig;
+            return componentConfig;
         });
 
         var promiseQueryUser = Authentication.queryUserInfo();
         var promiseGetGroups = ObjectLookupService.getGroups();
 
         var previousId = null;
-        $scope.$on('award-updated', function (e, data) {
+        $scope.$on('object-updated', function (e, data) {
             if (!CaseInfoService.validateCaseInfo(data)) {
                 return;
             }
@@ -61,30 +62,26 @@ angular.module('award').controller('Award.ActionsController', ['$scope', '$state
         };
 
         $scope.createNew = function () {
-            $state.go("frevvo", {
+            $state.go("frevvo-new-case", {
                 name: "new-case"
             });
-            //$state.go('newCase');
         };
 
         $scope.edit = function (caseInfo) {
-            $state.go("frevvo", {
+            $state.go("frevvo-edit-case", {
                 name: "edit-case"
                 , arg: {
                     caseId: caseInfo.id
                     , caseNumber: caseInfo.caseNumber
                     , mode: "edit"
-                    , containerId: caseInfo.containerId
-                    , folderId: caseInfo.folderId
+                    , containerId: caseInfo.container.id
+                    , folderId: caseInfo.container.folder.id
                 }
             });
-            //if (caseInfo && caseInfo.id && caseInfo.caseNumber && caseInfo.status) {
-            //    $state.go('editCase', {id: caseInfo.id, caseNumber: caseInfo.caseNumber, containerId: caseInfo.container.id, folderId: caseInfo.container.folder.id});
-            //}
         };
 
         $scope.changeStatus = function (caseInfo) {
-            $state.go("frevvo", {
+            $state.go("frevvo-change-case-status", {
                 name: "change-case-status"
                 , arg: {
                     caseId: caseInfo.id
@@ -92,19 +89,16 @@ angular.module('award').controller('Award.ActionsController', ['$scope', '$state
                     , status: caseInfo.status
                 }
             });
-            //if (caseInfo && caseInfo.id && caseInfo.caseNumber && caseInfo.status) {
-            //    $state.go('status', {id: caseInfo.id, caseNumber: caseInfo.caseNumber, status: caseInfo.status});
-            //}
         };
         $scope.reinvestigate = function (caseInfo) {
-            $state.go("frevvo", {
+            $state.go("frevvo-reinvestigate", {
                 name: "reinvestigate"
                 , arg: {
                     caseId: caseInfo.id
                     , caseNumber: caseInfo.caseNumber
                     , mode: "reinvestigate"
-                    , containerId: caseInfo.containerId
-                    , folderId: caseInfo.folderId
+                    , containerId: caseInfo.container.id
+                    , folderId: caseInfo.container.folder.id
                 }
             });
         };
@@ -124,7 +118,29 @@ angular.module('award').controller('Award.ActionsController', ['$scope', '$state
         };
 
         $scope.merge = function () {
-            console.log('merge');
+            $event.preventDefault();
+            var modalInstance = $modal.open({
+                animation: $scope.animationsEnabled,
+                templateUrl: 'modules/cases/views/components/case-merge.client.view.html',
+                controller: 'Cases.MergeController',
+                size: 'lg',
+                resolve: {
+                    $clientInfoScope: function () {
+                        return $scope;
+                    },
+                    $filter: function () {
+                        return $scope.config.clientInfo.clientFacetFilter;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (selectedCase) {
+                if(selectedCase){
+                    console.log("Code goes here.");
+                }
+            }, function () {
+                // Cancel button was clicked
+            });
         };
 
         $scope.split = function () {
