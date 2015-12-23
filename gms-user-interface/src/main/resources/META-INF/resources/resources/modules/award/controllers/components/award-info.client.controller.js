@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('award').controller('Award.InfoController', ['$scope', '$stateParams', 'UtilService'
-    , 'Object.LookupService', 'Case.LookupService', 'Case.InfoService', 'Object.ModelService','ConfigService',
+    , 'Object.LookupService', 'Case.LookupService', 'Case.InfoService', 'Object.ModelService','ConfigService'
     , function ($scope, $stateParams, Util, ObjectLookupService, CaseLookupService, CaseInfoService, ObjectModelService,ConfigService) {
 
         ConfigService.getComponentConfig("award", "info").then(function (componentConfig) {
